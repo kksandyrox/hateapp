@@ -14,7 +14,7 @@ class UsersController extends AppController {
  *
  * @var array
  */
-	public $components = array('Paginator', 'Session');
+	public $components = array('Paginator', 'Flash', 'Auth');
 
 /**
  * index method
@@ -105,6 +105,19 @@ class UsersController extends AppController {
 			$this->Session->setFlash(__('The user could not be deleted. Please, try again.'));
 		}
 		return $this->redirect(array('action' => 'index'));
+	}
+
+	public function login() {
+		$this->layout = 'front-end';
+		if($this->request->is('post')) {
+			if($this->Auth->login()) {
+				return $this->redirect(array('controller' => 'users', 'action' => 'dashboard'));
+			}
+			else {
+				pr(Authcomponent::password('test123'));
+    			$this->Flash->set(__('Invalid username or password'));
+			}
+		}
 	}
 
 /**
