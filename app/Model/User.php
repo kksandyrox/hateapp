@@ -75,4 +75,23 @@ class User extends AppModel {
 		)
 	);
 
+	public function beforeSave($options=array())
+	{
+		parent::beforeSave($options);
+			if (isset($this->data['User']['password'])) {
+			$this->data['User']['password'] = AuthComponent::password($this->data['User']['password']); 
+		}
+	return true;
+	}
+
+	public function checkRequired($requiredFields, $data) {
+		$param = true;
+		foreach ($requiredFields as $item) {
+			if(empty($data['User'][$item])) {
+				$param = false;
+			}
+		}
+		return $param;
+	}
+
 }

@@ -15,7 +15,12 @@ class UsersController extends AppController {
  * @var array
  */
 	public $components = array('Paginator', 'Flash', 'Auth');
-
+    
+    public function beforeFilter()
+    {
+        parent::beforeFilter();
+        $this->Auth->allow('register', 'login');
+    }
 /**
  * index method
  *
@@ -107,6 +112,21 @@ class UsersController extends AppController {
 		return $this->redirect(array('action' => 'index'));
 	}
 
+	public function register() {
+		$this->layout = 'front-end';
+		if($this->request->is('post')) {
+			$required_fields = array('username', 'password', 'email');
+			if($this->User->checkRequired($required_fields, $this->request->data)) {
+				if($this->User->save($this->request->data)) {
+					return $this->redirect(array('controller' => 'users', 'action' => 'dashboard'));
+				}
+			}
+			else {
+				$this->Flash->set(__('Argghh..Hate it when registration fails! Please try again'));
+			}				
+		}
+	}
+
 	public function login() {
 		$this->layout = 'front-end';
 		if($this->request->is('post')) {
@@ -114,10 +134,15 @@ class UsersController extends AppController {
 				return $this->redirect(array('controller' => 'users', 'action' => 'dashboard'));
 			}
 			else {
-				pr(Authcomponent::password('test123'));
     			$this->Flash->set(__('Invalid username or password'));
 			}
 		}
+	}
+
+	public function logout() {
+		$this->Auth->logout();
+		return $this->redirect(array('controller' => 'users', 'action' => 'login'));
+
 	}
 
 /**
