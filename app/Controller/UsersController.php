@@ -118,11 +118,11 @@ class UsersController extends AppController {
 			$required_fields = array('username', 'password', 'email');
 			if($this->User->checkRequired($required_fields, $this->request->data)) {
 				if($this->User->save($this->request->data)) {
-					return $this->redirect(array('controller' => 'users', 'action' => 'dashboard'));
+					return $this->redirect(array('controller' => 'users', 'action' => 'hateboard'));
 				}
 			}
 			else {
-				$this->Flash->set(__('Argghh..Hate it when registration fails! Please try again'));
+				$this->Flash->error(__('Argghh..Hate it when registration fails! Please try again'));
 			}				
 		}
 	}
@@ -131,10 +131,13 @@ class UsersController extends AppController {
 		$this->layout = 'front-end';
 		if($this->request->is('post')) {
 			if($this->Auth->login()) {
-				return $this->redirect(array('controller' => 'users', 'action' => 'dashboard'));
+				return $this->redirect(array('controller' => 'users', 'action' => 'hateboard'));
 			}
 			else {
-    			$this->Flash->set(__('Invalid username or password'));
+				if(!empty($this->request->data['username']))
+				$this->request->data['User']['username'] = $this->request->data['username'];
+				$this->request->data['User']['password'] = '';
+    			$this->Flash->error('Invalid username or password');
 			}
 		}
 	}
@@ -143,6 +146,10 @@ class UsersController extends AppController {
 		$this->Auth->logout();
 		return $this->redirect(array('controller' => 'users', 'action' => 'login'));
 
+	}
+
+	public function hateboard() {
+		$this->layout = 'front-end';
 	}
 
 /**
