@@ -75,6 +75,25 @@ class User extends AppModel {
 		)
 	);
 
+	public $actsAs = array(
+		'Upload.Upload' => array(
+			'image' => array(
+				'fields' => array(
+					'dir' => 'dir'
+					),
+				'thumbnailSizes' => array(
+					'xvga' => '1024x768',
+					'sbp' => '220x150',
+					'dis' => '420x250',
+					'vga' => '149x178',
+					'thumb' => '128x128',
+					'icon' => '82x82'          
+					),
+				'thumbnailMethod' => 'php'
+				)
+			)
+		);
+
 	public function beforeSave($options=array())
 	{
 		parent::beforeSave($options);

@@ -15,6 +15,7 @@ class UsersController extends AppController {
  * @var array
  */
 	public $components = array('Paginator', 'Flash', 'Auth');
+	public $helpers = array('Time');
     
     public function beforeFilter()
     {
@@ -150,6 +151,26 @@ class UsersController extends AppController {
 
 	public function hateboard() {
 		$this->layout = 'front-end';
+	}
+
+	public function editProfile($id = null) {
+		$this->layout = 'front-end';
+		if(Authcomponent::user('id') !== $id) {
+			$this->Flash->dissmissibleError(__('You are not allowed to perform this action'));
+			return $this->redirect(array('controller' => 'users', 'action' => 'hateboard'));
+		}
+		if($this->request->is(array('post', 'put'))) {
+			if(!empty($this->request->data)) {
+				$this->User->id = $id;
+				if($this->User->save($this->request->data)) {
+					$this->Flash->dissmissibleSuccess(__('Your profile has been successfully updated.'));
+					return $this->redirect(array('controller' => 'users', 'action' => 'hateboard'));
+				}
+			}
+		}
+		else {
+			$this->request->data = $this->User->findById($id);
+		}
 	}
 
 /**
